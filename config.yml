@@ -24,7 +24,7 @@ routingServers:
       port: '5001'
     truck:
       host: '141.94.166.77'
-      port: '5002'
+      port: '5000'
   ors:
     driving-car:
       host: '0.0.0.0'
