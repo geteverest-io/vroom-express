@@ -10,6 +10,7 @@ const rfs = require('rotating-file-stream');
 const app = express();
 
 const HTTP_OK_CODE = 200;
+const HTTP_UNAUTHORIZED_CODE = 403;
 const HTTP_ERROR_CODE = 400;
 const HTTP_TOOLARGE_CODE = 413;
 const HTTP_INTERNALERROR_CODE = 500;
@@ -67,6 +68,20 @@ const fileExists = function (filePath) {
   } catch (err) {
     return false;
   }
+};
+
+const checkAuthCallback = function () {
+  return function (req, res, next) {
+    if (req.get('X-OSRM-Key') != 'BThh09HmZf') {
+      res.status(HTTP_UNAUTHORIZED_CODE);
+      res.send({
+        code: '403',
+        error: 'Unauthorized',
+      });
+      return;
+    }
+    next();
+  };
 };
 
 // Callback for size and some input validity checks.
@@ -276,6 +291,7 @@ const execCallback = function (req, res) {
 };
 
 app.post(args.baseurl, [
+  checkAuthCallback,
   sizeCheckCallback(args.maxlocations, args.maxvehicles),
   execCallback,
 ]);
